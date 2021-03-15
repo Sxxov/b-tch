@@ -1,4 +1,5 @@
-REM setlocal EnableDelayedExpansion
+:: don't setlocal, as it'll prevent access to outside variables
+@REM setlocal EnableDelayedExpansion
 
 :$.core
 
@@ -28,8 +29,8 @@ set "DOLLAR_CHAR=$"
 :: ----------- class -----------
 :: @type	keyword
 :: @example	`%class% ()`
-REM call set "[[class]].name=%%0"
-REM set "![[class]].name!=call :![[class]].name!"
+@REM call set "[[class]].name=%%0"
+@REM set "![[class]].name!=call :![[class]].name!"
 set "class=set "[[class]].name=%%0"&&set "![[class]].name!=call :![[class]].name!""
 set "private=![[class]].name!.private"
 set "public=![[class]].name!"
@@ -60,57 +61,58 @@ set "^>=& set "$=^^^!returned^^^!""
 ::				)
 ::			`
 :: @source
-REM set [[arguments]].keysString=$
-REM if "![[arguments]].keysString!" == "!DOLLAR_SIGN!" (
-REM 	set [[arguments]].keysString=
-REM		set [[arguments]].keys.length=0
-REM		set [[arguments]].values.length=0
-REM ) else (
-REM 	set /a [[i]]=0
-REM 	(
-REM			for %%a in ("%[[arguments]].keysString:, =" "%") do (
-REM 			rem echo ![[i]]!, %%~a, %![[i]]!%
-REM 			set [[arguments]].keys[![[i]]!]=%%~a
-REM 			set /a [[i]]+=1
-REM 		)
-REM		)
-REM 	set /a [[arguments]].keys.length=![[i]]! + 1
-REM 	set /a [[i]]=0
-REM 	call set [[arguments]].valuesString=%%*
-REM 	(
-REM			for %%a in (![[arguments]].valuesString!) do (
-REM 			for %%b in (![[i]]!) do (
-REM 				rem echo ![[arguments]].keys[%%b]!
-REM					set "[[arguments]].values[%%b]=%%~a" 2>nul
-REM 				set "![[arguments]].keys[%%b]!=%%~a" 2>nul
-REM 			)
-REM 			set /a [[i]]+=1
-REM 		)
-REM		)
-REM 	set /a [[arguments]].values.length=![[i]]! + 1
-REM 	set [[i]]=
-REM )
-REM set /a "[[gc]].currentScope+=1"
-REM set /a "[[gc]].previousScope=![[gc]].currentScope! - 1"
-REM	set /a "[[i]]=0"
-REM if not "![[arguments]].valuesString:#=!" == "![[arguments]].valuesString!"
-REM	(
-REM		for /f "tokens=* usebackq" %%a in (`set # 2>nul`) do (
-REM			for /f "tokens=1-2 delims==" %%c in ("%%a") do (
-REM				(
-REM					set "[[gc]].scopes[![[gc]].currentScope!].trackedVariables[![[i]]!]=%%c"
-REM					(
-REM						for /f "tokens=1 usebackq" %%d in (`set [[gc]].scopes[![[gc]].previousScope!].trackedVariables[ 2>nul`) do (
-REM							if "!%%d!" == "%%c" (
-REM								set "[[gc]].scopes[![[gc]].currentScope!].trackedVariables[![[i]]!]="
-REM							)
-REM						)
-REM					)
-REM					set /a "[[i]]+=1"
-REM				)
-REM			)
-REM		)
-REM	)
+@REM set [[arguments]].keysString=$
+@REM if "![[arguments]].keysString!" == "!DOLLAR_SIGN!" (
+@REM 	set [[arguments]].keysString=
+@REM 	set [[arguments]].keys.length=0
+@REM 	set [[arguments]].values.length=0
+@REM ) else (
+@REM 	set /a [[i]]=0
+@REM 	(
+@REM 		for %%a in ("![[arguments]].keysString:, =" "!") do (
+@REM 			rem echo ![[i]]!, %%~a, %![[i]]!%
+@REM 			set [[arguments]].keys[![[i]]!]=%%~a
+@REM 			set /a [[i]]+=1
+@REM 		)
+@REM 	)
+@REM 	set /a [[arguments]].keys.length=![[i]]! + 1
+@REM 	set /a [[i]]=0
+@REM 	call set [[arguments]].valuesString=%%*
+@REM 	if not "![[arguments]].valuesString!" == ""
+@REM 	(
+@REM 		for %%a in (![[arguments]].valuesString!) do (
+@REM 			for %%b in (![[i]]!) do (
+@REM 				rem echo ![[arguments]].keys[%%b]!
+@REM 					set "[[arguments]].values[%%b]=%%~a" 2>nul
+@REM 				set "![[arguments]].keys[%%b]!=%%~a" 2>nul
+@REM 			)
+@REM 			set /a [[i]]+=1
+@REM 		)
+@REM 	)
+@REM 	set /a [[arguments]].values.length=![[i]]! + 1
+@REM 	set [[i]]=
+@REM )
+@REM set /a "[[gc]].currentScope+=1"
+@REM set /a "[[gc]].previousScope=![[gc]].currentScope! - 1"
+@REM set /a "[[i]]=0"
+@REM if not "![[arguments]].keysString:#=!" == "![[arguments]].keysString!"
+@REM 	(
+@REM 		for /f "tokens=* usebackq delims==" %%a in (`set # 2>nul`) do (
+@REM 			for /f "tokens=1-2 delims==" %%c in ("%%a") do (
+@REM 				(
+@REM 					set "[[gc]].scopes[![[gc]].currentScope!].trackedVariables[![[i]]!]=%%c"
+@REM 					(
+@REM 						for /f "tokens=1 usebackq" %%d in (`set [[gc]].scopes[![[gc]].previousScope!].trackedVariables[ 2>nul`) do (
+@REM 							if "!%%d!" == "%%c" (
+@REM 								set "[[gc]].scopes[![[gc]].currentScope!].trackedVariables[![[i]]!]="
+@REM 							)
+@REM 						)
+@REM 					)
+@REM 					set /a "[[i]]+=1"
+@REM 				)
+@REM 			)
+@REM 		)
+@REM 	)
 set "[[i]]="
 set "[[arguments]].index.currentStackIndex=0"
 set "[[arguments]].index.previousStackIndex=0"
@@ -127,8 +129,9 @@ set "[[arguments]].values.length="
 @REM set "function=set [[arguments]].keysString=$&&if "^^^![[arguments]].keysString^^^!" == "^^^!DOLLAR_SIGN^^^!" (set [[arguments]].keysString=&&set [[arguments]].keys.length=0&&for %%a in ("^^^![[arguments]].index.currentStackIndex^^^!") do (for %%b in ("^^^![[arguments]].index.previousStackIndex^^^!") do (set "[[arguments]].index.stack[%%~a]=^^^![[arguments]].index.stack[%%~b]^^^!"&&set /a "[[arguments]].index.previousStackIndex=%%a"&&set /a "[[arguments]].index.currentStackIndex=%%a + 1"))) else ((set /a [[i]]=0&&for %%a in ("^^^![[arguments]].keysString:, =" "^^^!") do (set [[arguments]].keys[^^^![[i]]^^^!]=%%~a&&set /a [[i]]+=1 ))&&set /a [[arguments]].keys.length=^^^![[i]]^^^! + 1&&set /a [[i]]=0&&call set [[arguments]].valuesString=%%*&&(for %%a in (^^^![[arguments]].valuesString^^^!) do ((for %%b in (^^^![[i]]^^^!) do (set "[[arguments]].values[%%b]=%%~a" 2>nul&&set "^^^![[arguments]].keys[%%b]^^^!=%%~a"2>nul))&&set /a [[i]]+=1))&&set /a [[arguments]].values.length=^^^![[i]]^^^! + 1&&set [[i]]=&&for %%a in ("^^^![[arguments]].index.currentStackIndex^^^!") do (set "[[arguments]].index.stack[%%~a]=^^^![[arguments]].values.length^^^!"&&set /a "[[arguments]].index.previousStackIndex=%%a"&&set /a "[[arguments]].index.currentStackIndex=%%a + 1"))"
 @REM set "function=set [[arguments]].keysString=$&&if "^^^![[arguments]].keysString^^^!" == "^^^!DOLLAR_SIGN^^^!" (set [[arguments]].keysString=&&set [[arguments]].keys.length=0&&set [[arguments]].values.length=0) else ((set /a [[i]]=0&&for %%a in ("^^^![[arguments]].keysString:, =" "^^^!") do (set [[arguments]].keys[^^^![[i]]^^^!]=%%~a&&set /a [[i]]+=1 ))&&set /a [[arguments]].keys.length=^^^![[i]]^^^! + 1&&set /a [[i]]=0&&call set [[arguments]].valuesString=%%*&&(for %%a in (^^^![[arguments]].valuesString^^^!) do ((for %%b in (^^^![[i]]^^^!) do (set "[[arguments]].values[%%b]=%%~a" 2>nul&&set "^^^![[arguments]].keys[%%b]^^^!=%%~a"2>nul))&&set /a [[i]]+=1))&&set /a [[arguments]].values.length=^^^![[i]]^^^! + 1&&set [[i]]=)"
 @REM set "function=set [[arguments]].keysString=$&&if "^^^![[arguments]].keysString^^^!" == "^^^!DOLLAR_SIGN^^^!" (set [[arguments]].keysString=&&set [[arguments]].keys.length=0&&set [[arguments]].values.length=0) else ((set /a [[i]]=0&&for %%a in ("^^^![[arguments]].keysString:, =" "^^^!") do (set [[arguments]].keys[^^^![[i]]^^^!]=%%~a&&set /a [[i]]+=1 ))&&set /a [[arguments]].keys.length=^^^![[i]]^^^! + 1&&set /a [[i]]=0&&call set [[arguments]].valuesString=%%*&&(for %%a in (^^^![[arguments]].valuesString^^^!) do ((for %%b in (^^^![[i]]^^^!) do (set "[[arguments]].values[%%b]=%%~a" 2>nul&&set "^^^![[arguments]].keys[%%b]^^^!=%%~a"2>nul))&&set /a [[i]]+=1))&&set /a [[arguments]].values.length=^^^![[i]]^^^! + 1&&set [[i]]=)&&set /a "[[gc]].currentScope+=1"&set /a "[[gc]].previousScope=^^^![[gc]].currentScope^^^! - 1"&set /a "[[i]]=0"&(for /f "tokens=* usebackq" %%a in (`set # 2^^^>nul`) do (for /f "tokens=1-2 delims==" %%c in ("%%a") do ((set "[[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[^^^![[i]]^^^!]=%%c"&(for /f "tokens=1 usebackq delims==" %%d in (`set [[gc]].scopes[^^^![[gc]].previousScope^^^!].trackedVariables[ 2^^^>nul`) do (if "^^^!%%d^^^!" == "%%c" (set "[[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[^^^![[i]]^^^!]=")))&set /a "[[i]]+=1"))))"
-set "function=set [[arguments]].keysString=$&&if "^^^![[arguments]].keysString^^^!" == "^^^!DOLLAR_SIGN^^^!" (set [[arguments]].keysString=&&set [[arguments]].keys.length=0&&set [[arguments]].values.length=0) else ((set /a [[i]]=0&&for %%a in ("^^^![[arguments]].keysString:, =" "^^^!") do (set [[arguments]].keys[^^^![[i]]^^^!]=%%~a&&set /a [[i]]+=1 ))&&set /a [[arguments]].keys.length=^^^![[i]]^^^! + 1&&set /a [[i]]=0&&call set [[arguments]].valuesString=%%*&&(for %%a in (^^^![[arguments]].valuesString^^^!) do ((for %%b in (^^^![[i]]^^^!) do (set "[[arguments]].values[%%b]=%%~a" 2>nul&&set "^^^![[arguments]].keys[%%b]^^^!=%%~a"2>nul))&&set /a [[i]]+=1))&&set /a [[arguments]].values.length=^^^![[i]]^^^! + 1&&set [[i]]=)&&set /a "[[gc]].currentScope+=1"&set /a "[[gc]].previousScope=^^^![[gc]].currentScope^^^! - 1"&set /a "[[i]]=0"&if not "^^^![[arguments]].valuesString:#=^^^!" == "^^^![[arguments]].valuesString^^^!" (for /f "tokens=* usebackq" %%a in (`set # 2^^^>nul`) do (for /f "tokens=1-2 delims==" %%c in ("%%a") do ((set "[[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[^^^![[i]]^^^!]=%%c"&(for /f "tokens=1 usebackq delims==" %%d in (`set [[gc]].scopes[^^^![[gc]].previousScope^^^!].trackedVariables[ 2^^^>nul`) do (if "^^^!%%d^^^!" == "%%c" (set "[[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[^^^![[i]]^^^!]=")))&set /a "[[i]]+=1"))))"
-
+@REM set "function=set [[arguments]].keysString=$&&if "^^^![[arguments]].keysString^^^!" == "^^^!DOLLAR_SIGN^^^!" (set [[arguments]].keysString=&&set [[arguments]].keys.length=0&&set [[arguments]].values.length=0) else ((set /a [[i]]=0&&for %%a in ("^^^![[arguments]].keysString:, =" "^^^!") do (set [[arguments]].keys[^^^![[i]]^^^!]=%%~a&&set /a [[i]]+=1 ))&&set /a [[arguments]].keys.length=^^^![[i]]^^^! + 1&&set /a [[i]]=0&&call set [[arguments]].valuesString=%%*&&(for %%a in (^^^![[arguments]].valuesString^^^!) do ((for %%b in (^^^![[i]]^^^!) do (set "[[arguments]].values[%%b]=%%~a" 2>nul&&set "^^^![[arguments]].keys[%%b]^^^!=%%~a"2>nul))&&set /a [[i]]+=1))&&set /a [[arguments]].values.length=^^^![[i]]^^^! + 1&&set [[i]]=)&&set /a "[[gc]].currentScope+=1"&set /a "[[gc]].previousScope=^^^![[gc]].currentScope^^^! - 1"&set /a "[[i]]=0"&if not "^^^![[arguments]].valuesString:#=^^^!" == "^^^![[arguments]].valuesString^^^!" (for /f "tokens=* usebackq" %%a in (`set # 2^^^>nul`) do (for /f "tokens=1-2 delims==" %%c in ("%%a") do ((set "[[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[^^^![[i]]^^^!]=%%c"&(for /f "tokens=1 usebackq delims==" %%d in (`set [[gc]].scopes[^^^![[gc]].previousScope^^^!].trackedVariables[ 2^^^>nul`) do (if "^^^!%%d^^^!" == "%%c" (set "[[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[^^^![[i]]^^^!]=")))&set /a "[[i]]+=1"))))"
+@REM set "function=set [[arguments]].keysString=$&if "^^^![[arguments]].keysString^^^!" == "^^^!DOLLAR_SIGN^^^!" (set [[arguments]].keysString=&set [[arguments]].keys.length=0&set [[arguments]].values.length=0) else (set /a [[i]]=0&(for %%a in ("^^^![[arguments]].keysString:, =" "^^^!") do (set [[arguments]].keys[^^^![[i]]^^^!]=%%~a&set /a [[i]]+=1))&set /a [[arguments]].keys.length=^^^![[i]]^^^! + 1&set /a [[i]]=0&call set [[arguments]].valuesString=%%*&(for %%a in (^^^![[arguments]].valuesString^^^!) do (for %%b in (^^^![[i]]^^^!) do (set "[[arguments]].values[%%b]=%%~a" 2^^^>nul&set "^^^![[arguments]].keys[%%b]^^^!=%%~a" 2^^^>nul)&set /a [[i]]+=1))&set /a [[arguments]].values.length=^^^![[i]]^^^! + 1&set [[i]]=)&set /a "[[gc]].currentScope+=1"&set /a "[[gc]].previousScope=^^^![[gc]].currentScope^^^! - 1"&set /a "[[i]]=0"&if not "^^^![[arguments]].valuesString:#=^^^!" == "^^^![[arguments]].valuesString^^^!" (for /f "tokens=* usebackq delims==" %%a in (`set # 2^^^>nul`) do (for /f "tokens=1-2 delims==" %%c in ("%%a") do ((set "[[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[^^^![[i]]^^^!]=%%c"&(for /f "tokens=1 usebackq" %%d in (`set [[gc]].scopes[^^^![[gc]].previousScope^^^!].trackedVariables[ 2^^^>nul`) do (if "^^^!%%d^^^!" == "%%c" (set "[[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[^^^![[i]]^^^!]=")))&set /a "[[i]]+=1"))))"
+set "function=set [[arguments]].keysString=$&if "^^^![[arguments]].keysString^^^!" == "^^^!DOLLAR_SIGN^^^!" (set [[arguments]].keysString=&set [[arguments]].keys.length=0&set [[arguments]].values.length=0) else (set /a [[i]]=0&(for %%a in ("^^^![[arguments]].keysString:, =" "^^^!") do (set [[arguments]].keys[^^^![[i]]^^^!]=%%~a&set /a [[i]]+=1))&set /a [[arguments]].keys.length=^^^![[i]]^^^! + 1&set /a [[i]]=0&call set [[arguments]].valuesString=%%*&if not "^^^![[arguments]].valuesString^^^!" == "" (for %%a in (^^^![[arguments]].valuesString^^^!) do (for %%b in (^^^![[i]]^^^!) do (set "[[arguments]].values[%%b]=%%~a" 2^^^>nul&set "^^^![[arguments]].keys[%%b]^^^!=%%~a" 2^^^>nul)&set /a [[i]]+=1))&set /a [[arguments]].values.length=^^^![[i]]^^^! + 1&set [[i]]=)&set /a "[[gc]].currentScope+=1"&set /a "[[gc]].previousScope=^^^![[gc]].currentScope^^^! - 1"&set /a "[[i]]=0"&if not "^^^![[arguments]].keysString:#=^^^!" == "^^^![[arguments]].keysString^^^!" (for /f "tokens=* usebackq delims==" %%a in (`set # 2^^^>nul`) do (for /f "tokens=1-2 delims==" %%c in ("%%a") do ((set "[[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[^^^![[i]]^^^!]=%%c"&(for /f "tokens=1 usebackq" %%d in (`set [[gc]].scopes[^^^![[gc]].previousScope^^^!].trackedVariables[ 2^^^>nul`) do (if "^^^!%%d^^^!" == "%%c" (set "[[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[^^^![[i]]^^^!]=")))&set /a "[[i]]+=1"))))"
 
 :: ----------- return -----------
 :: @type	keyword
@@ -144,32 +147,33 @@ set "function=set [[arguments]].keysString=$&&if "^^^![[arguments]].keysString^^
 ::				)
 ::			`
 :: @source
-REM set [[return]].value=$
-REM if "$" == "!DOLLAR_CHAR!" (
-REM 	set [[return]].value=
-REM		set returned=![[return]].value!
-REM )
-REM	
-REM	set /a "[[i]]=0"
-REM					
-REM	(
-REM		for /f "tokens=1 usebackq delims==" %%b in (`set [[gc]].scopes[![[gc]].currentScope!].trackedVariables[ 2>nul`) do (
-REM			set "!%%b!="
-REM			set "[[gc]].scopes[![[gc]].currentScope!].trackedVariables[![[i]]!]="
-REM			
-REM			set /a "[[i]]+=1"
-REM		)
-REM	)
-REM	
-REM	set /a "[[gc]].currentScope-=1"
-REM set /a "[[gc]].previousScope=![[gc]].currentScope! - 1"
-REM goto :eof
+@REM set [[return]].value=$
+@REM (if "$" == "!DOLLAR_CHAR!" (
+@REM 	set "[[return]].value="
+@REM ))
+@REM	
+@REM	set "returned=![[return]].value!"
+@REM	set /a "[[i]]=0"
+@REM					
+@REM	(
+@REM		for /f "tokens=1 usebackq delims==" %%b in (`set [[gc]].scopes[![[gc]].currentScope!].trackedVariables[ 2>nul`) do (
+@REM			set "!%%b!="
+@REM			set "[[gc]].scopes[![[gc]].currentScope!].trackedVariables[![[i]]!]="
+@REM			
+@REM			set /a "[[i]]+=1"
+@REM		)
+@REM	)
+@REM	
+@REM	set /a "[[gc]].currentScope-=1"
+@REM set /a "[[gc]].previousScope=![[gc]].currentScope! - 1"
+@REM goto :eof
 set "[[return]].value="
 set "returned="
 @REM set "return=set [[return]].value=$&(if "$" == "^^^!DOLLAR_CHAR^^^!" (set [[return]].value=))&set returned=^^^![[return]].value^^^!&((for %%a in ("^^^![[arguments]].index.currentStackIndex^^^!") do ((for %%b in ("^^^![[arguments]].index.previousStackIndex^^^!") do (if not "%%a" == "%%b" (for /l %%i in ("^^^![[arguments]].index.stack[%%~b]^^^!", 1, "^^^![[arguments]].index[%%~a]^^^!") do (set ^^^![[arguments]].keys[%%~i]^^^!=2>nul))))&set "[[arguments]].index.stack[%%~a]="))&set /a "[[arguments]].index.currentStackIndex-=1"&set /a "[[arguments]].index.previousStackIndex-=1")&goto :eof"
 @REM set "return=set [[return]].value=$&(if "$" == "^^^!DOLLAR_CHAR^^^!" (set [[return]].value=))&set returned=^^^![[return]].value^^^!&(for /l %%i in (0, 1, ^^^![[arguments]].keys.length^^^!) do (set ^^^![[arguments]].keys[%%i]^^^!=2>nul))&goto :eof"
 @REM set "return=echo ret&set [[return]].value=$&(if "$" == "^^^!DOLLAR_CHAR^^^!" (set [[return]].value=))&set returned=^^^![[return]].value^^^!&set /a "[[i]]=0"&(for /f "tokens=1 usebackq delims==" %%b in (`set [[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[`) do (set [[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[&echo gcing ^^^!%%b^^^! at ^^^![[gc]].currentScope^^^!&set ^^^!%%b^^^!=&set "[[gc]].scopes["&set "[[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[^^^![[i]]^^^!]="&set /a "[[i]]+=1"))&set /a "[[gc]].currentScope-=1"&set /a "[[gc]].previousScope=^^^![[gc]].currentScope^^^! - 1"&goto :eof"
-set "return=set [[return]].value=$&(if "$" == "^^^!DOLLAR_CHAR^^^!" (set [[return]].value=))&set returned=^^^![[return]].value^^^!&set /a "[[i]]=0"&(for /f "tokens=1 usebackq delims==" %%b in (`set [[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[ 2^^^>nul`) do (set ^^^!%%b^^^!=&set "[[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[^^^![[i]]^^^!]="&set /a "[[i]]+=1"))&set /a "[[gc]].currentScope-=1"&set /a "[[gc]].previousScope=^^^![[gc]].currentScope^^^! - 1"&goto :eof"
+@REM set "return=set [[return]].value=$&(if "$" == "^^^!DOLLAR_CHAR^^^!" (set [[return]].value=))&set returned=^^^![[return]].value^^^!&set /a "[[i]]=0"&(for /f "tokens=1 usebackq delims==" %%b in (`set [[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[ 2^^^>nul`) do (set ^^^!%%b^^^!=&set "[[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[^^^![[i]]^^^!]="&set /a "[[i]]+=1"))&set /a "[[gc]].currentScope-=1"&set /a "[[gc]].previousScope=^^^![[gc]].currentScope^^^! - 1"&goto :eof"
+set "return=set [[return]].value=$&(if "$" == "^^^!DOLLAR_CHAR^^^!" (set "[[return]].value="))&set "returned=^^^![[return]].value^^^!"&set /a "[[i]]=0"&(for /f "tokens=1 usebackq delims==" %%b in (`set [[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[ 2^^^>nul`) do (set "^^^!%%b^^^!="&set "[[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[^^^![[i]]^^^!]="&set /a "[[i]]+=1"))&set /a "[[gc]].currentScope-=1"&set /a "[[gc]].previousScope=^^^![[gc]].currentScope^^^! - 1"&goto :eof"
 
 :: ----------- forin -----------
 :: @type	keyword
@@ -187,7 +191,7 @@ set "forin=for /f "tokens=2 delims==" %%a in ('set $[') do "
 if not "%*" == "" (
 	call :%*
 )
-rem else, just load side effects
+@REM else, just load side effects
 goto :eof
 
 :: ----------- noop -----------
@@ -239,53 +243,29 @@ set "su.isEnabled="
 	goto :eof
 )
 :: @type	function
-:: @param	<string>, tag
 :: @param	<string>, message
 :: @example	`!$!.echo.log Foo, BarMessage`
 :$.echo.log
 (
-	set "tagDelimiter="
-
-	rem if no tag provided, tag becomes the message
-	if not "%2" == "" (
-		set "tagDelimiter=, "
-	)
-
-	echo Log: %1!tagDelimiter!%2
+	echo Log: %*
 
 	goto :eof
 )
 :: @type	function
-:: @param	<string>, tag
 :: @param	<string>, message
 :: @example	`!$!.echo.warn Foo, BarMessage`
 :$.echo.warn
 (
-	set "tagDelimiter="
-
-	rem if no tag provided, tag becomes the message
-	if not "%2" == "" (
-		set "tagDelimiter=, "
-	)
-
-	echo Warn: %1!tagDelimiter!%2
+	echo Warn: %*
 
 	goto :eof
 )
 :: @type	function
-:: @param	<string>, tag
 :: @param	<string>, message
 :: @example	`!$!.echo.error Foo, BarMessage`
 :$.echo.error
 (
-		set "tagDelimiter="
-
-	rem if no tag provided, tag becomes the message
-	if not "%2" == "" (
-		set "tagDelimiter=, "
-	)
-
-	echo Error: %1!tagDelimiter!%2
+	echo Error: %*
 
 	goto :eof
 )
@@ -295,7 +275,7 @@ set "su.isEnabled="
 :: @return	<number>
 :: @example	`!$!.performance.now`
 :$.performance.now
-%function:$=%
+%function%
 (
 	for /f "tokens=1-4 delims=:.," %%a in ("%time%") do (
 		set /a "now=(((%%a*60)+1%%b %% 100)*60+1%%c %% 100)*100+1%%d %% 100"
@@ -313,7 +293,7 @@ set "su.isEnabled="
 ::			`
 set "performance.measure.lastTime="
 :$.performance.measure
-%function:$=%
+%function%
 (
 	if "!performance.measure.lastTime!" == "" (
 		!$!.performance.now ^
@@ -450,7 +430,7 @@ set "performance.measure.lastTime="
 
 	%return:$=!string!%
 )
-rem todo: rewrite to not depend on `.length` prop, which was removed in favour of `array.length()`
+@REM todo: rewrite to not depend on `.length` prop, which was removed in favour of `array.length()`
 @REM :$.array.forEach
 @REM %function:$=_arrayVariableKey, callbackLabel%
 @REM (
@@ -464,7 +444,7 @@ rem todo: rewrite to not depend on `.length` prop, which was removed in favour o
 @REM )
 
 :$.environment.keys
-%function:$=%
+%function%
 (
 	for /f "tokens=* usebackq" %%a in (`set`) do (
 		set /a "i=0"
@@ -487,8 +467,8 @@ rem todo: rewrite to not depend on `.length` prop, which was removed in favour o
         set /a "lineNumber=%%l"
     )
 
-    !$!.echo.error UncaughtException ^(!_id! at line !lineNumber!^)
-    !$!.echo.error UncaughtException Press any key to terminate...
+    !$!.echo.error UncaughtException "^(!_id! at line !lineNumber!^)"
+    !$!.echo.error UncaughtException "Press any key to terminate..."
 
     pause >nul
 
