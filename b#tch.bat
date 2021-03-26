@@ -204,7 +204,7 @@ set "forin=for /f "tokens=1 delims==" %%a in ('set $[') do "
 ::					echo value=%%b
 ::				)
 ::			`
-set "forin=for /f "tokens=1,2 delims==" %%a in ('set $[') do "
+set "forinof=for /f "tokens=1,2 delims==" %%a in ('set $[') do "
 
 :: ----------- @ -----------
 :: @type	keyword
