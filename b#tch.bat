@@ -175,15 +175,50 @@ set "returned="
 @REM set "return=set [[return]].value=$&(if "$" == "^^^!DOLLAR_CHAR^^^!" (set [[return]].value=))&set returned=^^^![[return]].value^^^!&set /a "[[i]]=0"&(for /f "tokens=1 usebackq delims==" %%b in (`set [[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[ 2^^^>nul`) do (set ^^^!%%b^^^!=&set "[[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[^^^![[i]]^^^!]="&set /a "[[i]]+=1"))&set /a "[[gc]].currentScope-=1"&set /a "[[gc]].previousScope=^^^![[gc]].currentScope^^^! - 1"&goto :eof"
 set "return=set [[return]].value=$&(if "$" == "^^^!DOLLAR_CHAR^^^!" (set "[[return]].value="))&set "returned=^^^![[return]].value^^^!"&set /a "[[i]]=0"&(for /f "tokens=1 usebackq delims==" %%b in (`set [[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[ 2^^^>nul`) do (set "^^^!%%b^^^!="&set "[[gc]].scopes[^^^![[gc]].currentScope^^^!].trackedVariables[^^^![[i]]^^^!]="&set /a "[[i]]+=1"))&set /a "[[gc]].currentScope-=1"&set /a "[[gc]].previousScope=^^^![[gc]].currentScope^^^! - 1"&goto :eof"
 
+:: ----------- forof -----------
+:: @type	keyword
+:: @$param	<string>, variableKey
+:: @example	`
+::				%forof:$=items% (
+::					echo value=%%a
+::				)
+::			`
+set "forof=for /f "tokens=2 delims==" %%a in ('set $[') do "
+
 :: ----------- forin -----------
 :: @type	keyword
 :: @$param	<string>, variableKey
 :: @example	`
 ::				%forin:$=items% (
 ::					echo key=%%a
+::				)
+::			`
+set "forin=for /f "tokens=1 delims==" %%a in ('set $[') do "
+
+:: ----------- forinof -----------
+:: @type	keyword
+:: @$param	<string>, variableKey
+:: @example	`
+::				%forinof:$=items% (
+::					echo key=%%a
 ::					echo value=%%b
 ::				)
-set "forin=for /f "tokens=2 delims==" %%a in ('set $[') do "
+::			`
+set "forin=for /f "tokens=1,2 delims==" %%a in ('set $[') do "
+
+:: ----------- @ -----------
+:: @type	keyword
+:: @$param	<string>, decoratorMethodKey
+:: @example	`
+::				:func
+::				%@:$=nonEnumerableDecorator%
+::				%function%
+::			`
+@REM call set "[[decorator]].target=%%0"
+@REM set "[[decorator]].target=![[decorator]].target:~1!"
+@REM call :$ "![[decorator]].target!"
+@REM if not "![[return]].value!" == "" ![[return]].value!
+set "@=call set "[[decorator]].target=%%0"&set "[[decorator]].target=^^^![[decorator]].target:~1^^^!"&call :$ "^^^![[decorator]].target^^^!"&if not "^^^![[return]].value^^^!" == "" ^^^![[return]].value^^^!"
 
 :: ----------- core -----------
 :: @type	function<meta>
@@ -373,7 +408,7 @@ set "performance.measure.lastTime="
 %function:$=_arrayVariableKey%
 (
 	set /a "i=0"
-	%forin:$=!_arrayVariableKey!% (
+	%forof:$=!_arrayVariableKey!% (
 		set /a "i+=1"
 	)
 
@@ -420,7 +455,7 @@ set "performance.measure.lastTime="
 	)
 
 	set "string="
-	%forin:$=!_arrayVariableKey!% (
+	%forof:$=!_arrayVariableKey!% (
 		if "!string!" == "" (
 			set "string=%%a"
 		) else (
@@ -458,6 +493,27 @@ set "performance.measure.lastTime="
 	%return:$=!result!%
 )
 
+:: eg:
+:: 		%$%.tick.onNext echo a
+:: 		%$%.tick.next
+:$.tick.next
+%function%
+(
+	%forinof:$=[[tick]].tasks% (
+		%%b
+		set "%%a="
+	)
+
+	%return%
+)
+
+:$.tick.onNext
+%function:$=_command%
+(
+	%$%.array.push [[tick]].tasks !_command!
+
+	%return%
+)
 
 :: ----------- [[onUncaughtException]] -----------
 :$.[[onUncaughtException]]
