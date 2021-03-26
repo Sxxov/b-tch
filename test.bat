@@ -72,21 +72,21 @@ REM set /a "!arrayVariableKey!.length+=1"
 @REM !$!.performance.measure %>:$=a% & echo !a!
 @REM !$!.array.push arr helloooooooooooooooooooooooooooooooooo
 @REM !$!.performance.measure %>:$=a% & echo !a!
-set arr[0]=helloooo
-set arr[1]=helloooo
-set arr[2]=helloooo
-set arr[3]=helloooo
-set arr[4]=helloooo
-set arr[5]=helloooo
-set arr[6]=helloooo
-set arr[7]=helloooo
-set arr[8]=helloooo
-set arr[9]=helloooo
-set arr[10]=helloooo
-set arr[11]=helloooo
-set arr[12]=helloooo
+set arr[0]=0
+set arr[1]=1
+set arr[2]=2
+set arr[3]=3
+set arr[4]=4
+set arr[5]=5
+set arr[6]=6
+set arr[7]=7
+set arr[8]=8
+set arr[9]=9
+set arr[10]=10
+set arr[11]=11
+set arr[12]=12
 
-%forin:$=arr% (
+%forof:$=arr% (
 	%$%.echo.log %%a
 )
 
@@ -143,6 +143,8 @@ REM echo/
 REM echo/
 REM echo command read: "%command%"
 
+call :blockedFunction
+
 goto :eof
 
 REM :Animate
@@ -164,6 +166,22 @@ REM    ping -n 1 -w 300 localhost > NUL
 REM    ping -n 1 -w 300 localhost > NUL
 REM goto loop
 REM :notloop
+
+:blockedFunction
+%@:$=blocked%
+%function%
+(
+	echo "%0" "%1" "%2"
+	%return%
+)
+
+:blocked
+%function:$=methodName%
+(
+	echo blocking: !methodName!
+
+	%return:$=goto :eof%
+)
 
 :$.core
 :$.su
